@@ -9,7 +9,7 @@ from typing import Tuple, cast
 import agentops
 from dotenv import load_dotenv
 from openai import AsyncOpenAI
-from room_selector import (
+from .room_selector import (
     RoomSelectionTask,
     load_room_tasks,
     prompt_template_baseline,

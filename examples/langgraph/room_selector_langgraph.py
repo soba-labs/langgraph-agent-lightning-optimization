@@ -1,5 +1,6 @@
 """LangGraph room selector compatible with AgentLightning APO."""
 
+import asyncio
 from typing import Literal
 from rich.console import Console
 from langchain_openai import ChatOpenAI
@@ -19,6 +20,7 @@ from examples.openai_baseline import (
     ROOMS,
     JudgeResponse,
     RoomSelectionTask,
+    debug_agent,
 )
 from dotenv import load_dotenv
 
@@ -124,7 +126,9 @@ def room_selection_grader_langgraph(final_message: str, expected_choice: str) ->
 
 
 @rollout
-def room_selector_langgraph(task: RoomSelectionTask, prompt_template: PromptTemplate):
+def room_selector_langgraph(
+    task: RoomSelectionTask, prompt_template: PromptTemplate
+) -> float:
     """
     LangGraph-based room selector with Agent Lightning APO optimization.
     This version uses LangGraph for agent execution and can be optimized with APO.
@@ -136,29 +140,37 @@ def room_selector_langgraph(task: RoomSelectionTask, prompt_template: PromptTemp
     # Format the user message using the provided prompt template
     user_message = prompt_template.format(**task["task_input"])
 
-    console.print("[bold green]=== Task ===[/bold green]")
-    console.print(task)
-    console.print("\n[bold yellow]=== User Message ===[/bold yellow]")
+    console.print("[bold yellow]=== User Message ===[/bold yellow]")
     console.print(user_message)
 
-    # Run the agent with system prompt
+    # Run the agent with system prompt (fixed: use dict with "messages" key)
     result = app.invoke(
-        [
-            SystemMessage(content="You are a scheduling assistant."),
-            HumanMessage(content=user_message),
-        ]
+        {
+            "messages": [
+                SystemMessage(content="You are a scheduling assistant."),
+                HumanMessage(content=user_message),
+            ]
+        }
     )
 
-    # Get the final messsage
+    # Get the final message
     final_message = result["messages"][-1].content
 
-    console.print("\n[bold yellow]=== Final Response ===[/bold yellow]")
+    console.print("[bold yellow]=== Final Assistant Message ===[/bold yellow]")
     console.print(final_message)
 
     # Grade the response
     score = room_selection_grader_langgraph(final_message, task["expected_choice"])
 
-    console.print("\n[bold purple]=== Final Score ===[/bold purple]")
-    console.print(score)
-
     return score
+
+
+async def debug_room_selector_langgraph(limit: int = 1):
+    """Debug the LangGraph room selector."""
+    await debug_agent(
+        room_selector_langgraph, resource_key="prompt_template", limit=limit
+    )
+
+
+if __name__ == "__main__":
+    asyncio.run(debug_room_selector_langgraph())

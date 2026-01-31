@@ -359,18 +359,29 @@ def load_room_tasks() -> Dataset[RoomSelectionTask]:
     return cast(Dataset[RoomSelectionTask], tasks)
 
 
-async def debug_room_selector(limit: int = 1):
+async def debug_agent(
+    agent_fn,
+    resource_key: str = "prompt_template",
+    limit: int = 1
+):
+    """Generic debug function for testing room selector agents.
+
+    Args:
+        agent_fn: The agent function to test (e.g., room_selector or room_selector_langgraph)
+        resource_key: The key to use for the prompt template in resources dict
+        limit: Maximum number of tasks to run (default: 1)
+    """
     # Prepare all the components to run the agent
     runner = LitAgentRunner[RoomSelectionTask](AgentOpsTracer())
     store = InMemoryLightningStore()
     prompt_template = prompt_template_baseline()
     tasks = load_room_tasks()
-    with runner.run_context(agent=room_selector, store=store):
-        for task in tasks:
+    with runner.run_context(agent=agent_fn, store=store):
+        for task in tasks[:limit]:
             console.print("[bold green]=== Task ===[/bold green]", task, sep="\n")
             # Run the agent
             rollout = await runner.step(
-                task, resources={"main_prompt": prompt_template}
+                task, resources={resource_key: prompt_template}
             )
             # Get the spans and convert them to messages
             # Useful for debugging and analysis
@@ -386,6 +397,11 @@ async def debug_room_selector(limit: int = 1):
             console.print(
                 "[bold purple]=== Postmortem Reward ===[/bold purple]", reward, sep="\n"
             )
+
+
+async def debug_room_selector(limit: int = 1):
+    """Debug the OpenAI baseline room selector."""
+    await debug_agent(room_selector, resource_key="prompt_template", limit=limit)
 
 
 if __name__ == "__main__":
