@@ -7,6 +7,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "agentlightning>=0.3.0",
+    "poml>=0.0.8",
 ]
 
 [dependency-groups]

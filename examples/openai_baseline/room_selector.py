@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft. All rights reserved.
 
+import os
 import asyncio
 import json
 import traceback
@@ -23,6 +24,14 @@ from agentlightning.runner import LitAgentRunner
 from agentlightning.store import InMemoryLightningStore
 from agentlightning.tracer.agentops import AgentOpsTracer
 from agentlightning.types import Dataset, PromptTemplate
+import agentops
+from dotenv import load_dotenv
+
+load_dotenv()
+
+AGENTOPS_API_KEY = os.getenv("AGENTOPS_API_KEY")
+agentops.init(api_key=AGENTOPS_API_KEY, default_tags=["openai agents sdk"])
+
 
 console = Console()
 
@@ -344,7 +353,7 @@ def get_rooms_and_availability(
 
 def load_room_tasks() -> Dataset[RoomSelectionTask]:
     tasks: List[RoomSelectionTask] = []
-    for line in open("room_tasks.jsonl"):
+    for line in open("../../data/room_tasks.jsonl"):
         task = json.loads(line)
         tasks.append(RoomSelectionTask(**task))
     return cast(Dataset[RoomSelectionTask], tasks)
