@@ -3,8 +3,11 @@
 """This sample code demonstrates how to use an existing APO algorithm to tune the prompts."""
 
 import logging
+import os
 from typing import Tuple, cast
 
+import agentops
+from dotenv import load_dotenv
 from openai import AsyncOpenAI
 from room_selector import (
     RoomSelectionTask,
@@ -16,7 +19,13 @@ from room_selector import (
 from agentlightning import Trainer, setup_logging
 from agentlightning.adapter import TraceToMessages
 from agentlightning.algorithm.apo import APO
+from agentlightning.execution import SharedMemoryExecutionStrategy
 from agentlightning.types import Dataset
+
+load_dotenv()
+
+AGENTOPS_API_KEY = os.getenv("AGENTOPS_API_KEY")
+agentops.init(api_key=AGENTOPS_API_KEY, default_tags=["openai agents sdk"])
 
 
 def load_train_val_dataset() -> Tuple[
@@ -60,8 +69,8 @@ def main() -> None:
     )
     trainer = Trainer(
         algorithm=algo,
-        # Increase the number of runners to run more rollouts in parallel
-        n_runners=8,
+        # Use shared memory strategy to avoid multiprocessing pickling issues on macOS
+        strategy=SharedMemoryExecutionStrategy(n_runners=1),
         # APO algorithm needs a baseline
         # Set it either here or in the algo
         initial_resources={
