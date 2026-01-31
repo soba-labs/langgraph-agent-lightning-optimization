@@ -129,7 +129,7 @@ def create_room_selector_graph():
 
 def room_selection_grader_langgraph(final_message: str, expected_choice: str) -> float:
     """Grade the room selection using LLM judge."""
-    llm = ChatOpenAI(model="gpt-5-mini", temperature=0.0)
+    llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.0)
 
     system_content = (
         "You are a strict grader of exact room choice. "

@@ -119,7 +119,7 @@ def room_selection_grader(
         f"Bear in mind that the score can be partially correct (between 0 and 1)."
     )
     judge = client.chat.completions.parse(
-        model="gpt-4.1-mini",
+        model="gpt-4o-mini",
         messages=[
             {"role": "user", "content": judge_prompt},
         ],
@@ -169,7 +169,7 @@ def room_selector(task: RoomSelectionTask, prompt_template: PromptTemplate) -> f
     """
 
     client = OpenAI()
-    model = "gpt-4.1-nano"
+    model = "gpt-4o-mini"
 
     user_message = prompt_template.format(**task["task_input"])
 

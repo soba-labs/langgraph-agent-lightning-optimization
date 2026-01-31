@@ -4,7 +4,6 @@
 
 import logging
 import os
-import platform
 from typing import Tuple, cast
 
 import agentops
@@ -69,32 +68,36 @@ def main() -> None:
         _poml_trace=True,
     )
 
-    # Detect system and configure trainer accordingly
-    trainer_kwargs = {
-        "algorithm": algo,
+    trainer = Trainer(
+        algorithm=algo,
+        strategy=SharedMemoryExecutionStrategy(n_runners=1),
         # APO algorithm needs a baseline
-        # Set it either here or in the algo
-        "initial_resources": {
-            # The resource key can be arbitrary
-            "prompt_template": prompt_template_baseline()
-        },
+        initial_resources={"prompt_template": prompt_template_baseline()},
         # APO algorithm needs an adapter to process the traces produced by rollouts
-        # Use this adapter to convert spans to messages
-        "adapter": TraceToMessages(),
-    }
-
-    if platform.system() == "Linux":
-        # Linux: use multiple runners for parallel execution
-        trainer_kwargs["n_runners"] = 8
-    else:
-        # macOS/Windows: use shared memory strategy to avoid multiprocessing pickling issues
-        trainer_kwargs["strategy"] = SharedMemoryExecutionStrategy(n_runners=1)
-
-    trainer = Trainer(**trainer_kwargs)
+        adapter=TraceToMessages(),
+    )
     dataset_train, dataset_val = load_train_val_dataset()
     trainer.fit(
         agent=room_selector, train_dataset=dataset_train, val_dataset=dataset_val
     )
+
+    # Get the optimized prompt and save it
+    best_resources = trainer.best_resources
+    optimized_prompt = best_resources["prompt_template"]
+
+    # Save to file
+    output_file = "optimized_prompt.txt"
+    with open(output_file, "w") as f:
+        f.write(str(optimized_prompt))
+
+    # Display results
+    print("\n" + "=" * 80)
+    print("APO OPTIMIZATION COMPLETE")
+    print("=" * 80)
+    print(f"\nOptimized prompt saved to: {output_file}")
+    print(f"\nBaseline prompt:\n{prompt_template_baseline()}")
+    print(f"\nOptimized prompt:\n{optimized_prompt}")
+    print("\n" + "=" * 80)
 
 
 if __name__ == "__main__":
