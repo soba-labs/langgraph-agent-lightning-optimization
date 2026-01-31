@@ -13,7 +13,9 @@ These files are adapted from the [Microsoft Agent Lightning repository](https://
 
 ## Modifications
 
-- **AgentOps initialization** added to `room_selector.py` - Without proper agentops initialization, traces were dummy and not properly recorded.
+- **AgentOps initialization** added to both `room_selector.py` and `room_selector_apo.py` - Without proper agentops initialization, traces were dummy and not properly recorded.
+- **POML dependency** - The APO algorithm requires `poml` package: `uv add poml`
+- **macOS compatibility** in `room_selector_apo.py` - Uses `SharedMemoryExecutionStrategy` (from `agentlightning.execution`) instead of default multiprocessing to avoid pickling errors on macOS. This limits parallel execution (`n_runners=1`) but allows the code to run on macOS despite official Linux-only support.
 
 ## Usage
 
