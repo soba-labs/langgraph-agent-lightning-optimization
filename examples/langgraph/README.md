@@ -4,7 +4,9 @@ This directory contains a LangGraph implementation of the room scheduling agent 
 
 ## Files
 
-- **room_selector_langgraph.py** - LangGraph-based agent implementation compatible with APO
+- **room_selector_langgraph.py** - LangGraph-based agent implementation with debug mode
+- **room_selector_langgraph_apo.py** - APO training script for LangGraph agent
+- **__init__.py** - Module initialization
 
 ## Architecture
 
@@ -25,14 +27,8 @@ The following components are imported and reused from the OpenAI baseline:
 The following are custom implementations specific to this LangGraph version:
 
 - **`get_rooms_and_availability` tool** - LangGraph `@tool` decorator implementation
-- **`create_room_selector_graph()`** - LangGraph StateGraph workflow definition with:
-  - `AgentState` (MessagesState)
-  - `call_model` node
-  - `should_continue` conditional logic
-  - `call_tools` node - custom tool executor (see note below)
-- **`room_selection_grader_langgraph()`** - LangChain-based grader using:
-  - `ChatOpenAI` with `.with_structured_output()`
-  - `SystemMessage` and `HumanMessage` classes
+- **`create_room_selector_graph()`** - LangGraph StateGraph workflow definition
+- **`room_selection_grader_langgraph()`** - LangChain-based grader
 - **`room_selector_langgraph()`** - Main agent function decorated with `@rollout`
 
 **Note on Tool Execution**: This implementation uses a custom `call_tools()` function instead of LangGraph's `ToolNode`. The `ToolNode` causes a conflict with AgentOps instrumentation (`TypeError: descriptor '__call__' for 'type' objects doesn't apply to a 'ToolNode' object`). The custom function manually invokes tools and produces the same behavior without triggering the instrumentation issue.
@@ -52,13 +48,21 @@ Run from this directory:
 ```bash
 # Debug single task execution
 uv run python room_selector_langgraph.py
+
+# Train with APO to optimize prompts
+uv run python room_selector_langgraph_apo.py
 ```
 
-This will run the LangGraph agent on a single task with postmortem trace analysis.
+The debug script runs the LangGraph agent on a single task with postmortem trace analysis. The APO script performs iterative prompt optimization using the same APO configuration as the OpenAI baseline but with the LangGraph agent framework.
 
 ## Integration with APO
 
-The `room_selector_langgraph` function is decorated with `@rollout` and returns a float reward score, making it compatible with Agent Lightning's APO training pipeline. The prompt template can be optimized using APO just like the OpenAI baseline.
+The `room_selector_langgraph` function is decorated with `@rollout` and returns a float reward score, making it compatible with Agent Lightning's APO training pipeline. The `room_selector_langgraph_apo.py` script demonstrates this integration:
+
+- Reuses `load_train_val_dataset()`, `prompt_template_baseline()`, and other utilities from `openai_baseline`
+- Uses the same APO configuration (beam_width=2, branch_factor=2, beam_rounds=2)
+- Logs optimization progress to `apo_langgraph.log`
+- Uses `SharedMemoryExecutionStrategy` for macOS compatibility
 
 ## Benefits of LangGraph Implementation
 

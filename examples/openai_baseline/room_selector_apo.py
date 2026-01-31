@@ -4,6 +4,7 @@
 
 import logging
 import os
+import platform
 from typing import Tuple, cast
 
 import agentops
@@ -67,20 +68,29 @@ def main() -> None:
         beam_rounds=2,
         _poml_trace=True,
     )
-    trainer = Trainer(
-        algorithm=algo,
-        # Use shared memory strategy to avoid multiprocessing pickling issues on macOS
-        strategy=SharedMemoryExecutionStrategy(n_runners=1),
+
+    # Detect system and configure trainer accordingly
+    trainer_kwargs = {
+        "algorithm": algo,
         # APO algorithm needs a baseline
         # Set it either here or in the algo
-        initial_resources={
+        "initial_resources": {
             # The resource key can be arbitrary
             "prompt_template": prompt_template_baseline()
         },
         # APO algorithm needs an adapter to process the traces produced by rollouts
         # Use this adapter to convert spans to messages
-        adapter=TraceToMessages(),
-    )
+        "adapter": TraceToMessages(),
+    }
+
+    if platform.system() == "Linux":
+        # Linux: use multiple runners for parallel execution
+        trainer_kwargs["n_runners"] = 8
+    else:
+        # macOS/Windows: use shared memory strategy to avoid multiprocessing pickling issues
+        trainer_kwargs["strategy"] = SharedMemoryExecutionStrategy(n_runners=1)
+
+    trainer = Trainer(**trainer_kwargs)
     dataset_train, dataset_val = load_train_val_dataset()
     trainer.fit(
         agent=room_selector, train_dataset=dataset_train, val_dataset=dataset_val

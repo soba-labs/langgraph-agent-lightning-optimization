@@ -4,8 +4,9 @@ This directory contains a baseline implementation of a room scheduling agent tha
 
 ## Files
 
-- **room_selector.py** - Baseline agent implementation with a simple prompt template
+- **room_selector.py** - Baseline agent implementation with debug mode for single task execution
 - **room_selector_apo.py** - APO (Automatic Prompt Optimization) training script
+- **__init__.py** - Exports reusable components (data structures, tools, utilities) for use by other implementations
 
 ## Source
 

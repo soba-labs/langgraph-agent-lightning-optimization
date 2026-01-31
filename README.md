@@ -14,14 +14,17 @@ Agent Lightning is a framework for optimizing LLM agent prompts through iterativ
 ## Project Structure
 
 ```
-├── data/                           # Task datasets in JSONL format
-│   └── room_tasks.jsonl           # Room scheduling task examples
+├── data/                              # Task datasets in JSONL format
+│   └── room_tasks.jsonl              # Room scheduling task examples
 ├── examples/
-│   ├── openai_baseline/           # OpenAI-based agent examples
-│   │   ├── room_selector.py       # Baseline room scheduling agent
-│   │   └── room_selector_apo.py   # APO training script
-│   └── langgraph/                 # LangGraph implementations (planned)
-└── CLAUDE.md                      # Development guide for Claude Code
+│   ├── openai_baseline/              # OpenAI-based agent examples
+│   │   ├── __init__.py               # Exports reusable components
+│   │   ├── room_selector.py          # Baseline agent with debug mode
+│   │   └── room_selector_apo.py      # APO training script
+│   └── langgraph/                    # LangGraph implementations
+│       ├── __init__.py
+│       ├── room_selector_langgraph.py     # LangGraph agent with debug mode
+│       └── room_selector_langgraph_apo.py # APO training for LangGraph
 ```
 
 ## Setup
@@ -99,23 +102,37 @@ Note: This limits parallel execution (`n_runners=1`) which may impact training p
 
 ## Usage
 
-### Running the Baseline Agent
+### Running the Baseline Agents
 
+**OpenAI baseline:**
 ```bash
 cd examples/openai_baseline
 uv run python room_selector.py
 ```
 
-This runs a single task execution with the baseline prompt template for debugging.
+**LangGraph implementation:**
+```bash
+cd examples/langgraph
+uv run python room_selector_langgraph.py
+```
+
+Both run a single task execution with the baseline prompt template for debugging and trace analysis.
 
 ### Training with APO
 
+**OpenAI baseline:**
 ```bash
 cd examples/openai_baseline
 uv run python room_selector_apo.py
 ```
 
-APO will iteratively optimize the prompt template across multiple rounds, improving the agent's ability to correctly select meeting rooms with a smaller model.
+**LangGraph implementation:**
+```bash
+cd examples/langgraph
+uv run python room_selector_langgraph_apo.py
+```
+
+APO will iteratively optimize the prompt template across multiple rounds, improving the agent's ability to correctly select meeting rooms with a smaller model. Both implementations use the same optimization algorithm but different agent frameworks.
 
 ## How It Works
 
@@ -135,18 +152,6 @@ The example task is a meeting room scheduler that must:
 - Select optimal room using tie-breaking rules (capacity slack, extra equipment, distance, booking count)
 
 Dataset contains 57 test cases with varying complexity.
-
-## Development
-
-```bash
-# Lint code
-uv run ruff check .
-
-# Format code
-uv run ruff format .
-```
-
-See [CLAUDE.md](./CLAUDE.md) for detailed development guidance.
 
 ## Acknowledgments
 
