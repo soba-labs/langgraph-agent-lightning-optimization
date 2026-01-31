@@ -4,6 +4,7 @@ import os
 import asyncio
 import json
 import traceback
+from pathlib import Path
 from typing import List, Optional, Tuple, TypedDict, cast
 
 from openai import OpenAI
@@ -353,17 +354,14 @@ def get_rooms_and_availability(
 
 def load_room_tasks() -> Dataset[RoomSelectionTask]:
     tasks: List[RoomSelectionTask] = []
-    for line in open("../../data/room_tasks.jsonl"):
+    data_file = Path(__file__).parent.parent.parent / "data" / "room_tasks.jsonl"
+    for line in open(data_file):
         task = json.loads(line)
         tasks.append(RoomSelectionTask(**task))
     return cast(Dataset[RoomSelectionTask], tasks)
 
 
-async def debug_agent(
-    agent_fn,
-    resource_key: str = "prompt_template",
-    limit: int = 1
-):
+async def debug_agent(agent_fn, resource_key: str = "prompt_template", limit: int = 1):
     """Generic debug function for testing room selector agents.
 
     Args:
@@ -380,9 +378,7 @@ async def debug_agent(
         for task in tasks[:limit]:
             console.print("[bold green]=== Task ===[/bold green]", task, sep="\n")
             # Run the agent
-            rollout = await runner.step(
-                task, resources={resource_key: prompt_template}
-            )
+            rollout = await runner.step(task, resources={resource_key: prompt_template})
             # Get the spans and convert them to messages
             # Useful for debugging and analysis
             spans = await store.query_spans(rollout.rollout_id)

@@ -7,6 +7,7 @@ from .room_selector import (
     JudgeResponse,
     RoomSelectionTask,
     debug_agent,
+    prompt_template_baseline,
 )
 
 __all__ = [
@@ -19,4 +20,5 @@ __all__ = [
     "ROOMS",
     "JudgeResponse",
     "debug_agent",
+    "prompt_template_baseline",
 ]

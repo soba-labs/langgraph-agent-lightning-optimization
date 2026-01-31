@@ -29,16 +29,18 @@ The following are custom implementations specific to this LangGraph version:
   - `AgentState` (MessagesState)
   - `call_model` node
   - `should_continue` conditional logic
-  - `ToolNode` for tool execution
+  - `call_tools` node - custom tool executor (see note below)
 - **`room_selection_grader_langgraph()`** - LangChain-based grader using:
   - `ChatOpenAI` with `.with_structured_output()`
   - `SystemMessage` and `HumanMessage` classes
 - **`room_selector_langgraph()`** - Main agent function decorated with `@rollout`
 
+**Note on Tool Execution**: This implementation uses a custom `call_tools()` function instead of LangGraph's `ToolNode`. The `ToolNode` causes a conflict with AgentOps instrumentation (`TypeError: descriptor '__call__' for 'type' objects doesn't apply to a 'ToolNode' object`). The custom function manually invokes tools and produces the same behavior without triggering the instrumentation issue.
+
 ## Key Differences from OpenAI Baseline
 
 1. **Agent Framework**: LangGraph workflow vs. manual OpenAI API calls
-2. **Tool Handling**: Automatic via `ToolNode` vs. manual tool call processing
+2. **Tool Handling**: Custom `call_tools()` function vs. manual tool call processing (note: cannot use LangGraph's `ToolNode` due to AgentOps instrumentation conflict)
 3. **Message Format**: LangChain message classes (`SystemMessage`, `HumanMessage`) vs. dict format
 4. **State Management**: LangGraph `MessagesState` vs. manual message list management
 5. **Model**: Uses `gpt-4o-mini` (can be changed to match baseline's `gpt-4.1-nano`)

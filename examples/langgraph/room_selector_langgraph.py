@@ -5,10 +5,9 @@ from typing import Literal
 from rich.console import Console
 from langchain_openai import ChatOpenAI
 from langchain_core.tools import tool
-from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_core.messages import HumanMessage, SystemMessage, ToolMessage
 
 from langgraph.graph import MessagesState, StateGraph, START, END
-from langgraph.prebuilt import ToolNode
 
 from agentlightning.litagent import rollout
 from agentlightning.types import PromptTemplate
@@ -62,6 +61,7 @@ def get_rooms_and_availability(
 llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.0)
 tools = [get_rooms_and_availability]
 llm_with_tools = llm.bind_tools(tools)
+tools_by_name = {tool.name: tool for tool in tools}
 
 
 def should_continue(state: AgentState) -> Literal["tools", "end"]:
@@ -82,6 +82,33 @@ def call_model(state: AgentState) -> AgentState:
     return {"messages": [response]}
 
 
+def call_tools(state: AgentState) -> AgentState:
+    """Execute tool calls from the last message."""
+    messages = state["messages"]
+    last_message = messages[-1]
+
+    # Get tool calls from the last message
+    tool_calls = last_message.tool_calls
+
+    # Execute each tool call
+    tool_messages = []
+    for tool_call in tool_calls:
+        # Find and invoke the correct tool by name
+        tool_name = tool_call["name"]
+        tool = tools_by_name.get(tool_name)
+
+        if tool is None:
+            raise ValueError(f"Tool '{tool_name}' not found in available tools")
+
+        result = tool.invoke(tool_call["args"])
+
+        # Create a tool message with the result
+        tool_msg = ToolMessage(content=str(result), tool_call_id=tool_call["id"])
+        tool_messages.append(tool_msg)
+
+    return {"messages": tool_messages}
+
+
 def create_room_selector_graph():
     """Create a LangGraph agent for room selection."""
     # Build the graph
@@ -89,7 +116,7 @@ def create_room_selector_graph():
 
     # Add nodes
     workflow.add_node("agent", call_model)
-    workflow.add_node("tools", ToolNode(tools))
+    workflow.add_node("tools", call_tools)
 
     # Add edges
     workflow.add_edge(START, "agent")
