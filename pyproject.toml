@@ -2,7 +2,7 @@
 name = "langgraph-agent-lightning-optimization"
 version = "0.1.0"
 description = "LangGraph agent optimization using Agent Lightning's framework with APO algorithm. Room booking assistant example with Langsmith tracing"
-authors = [{name="Simon Budziak", company="Lubu Labs"}]
+authors = [{name="Simon Budziak", company="Soba Labs"}]
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
