@@ -1,5 +1,7 @@
 # LangGraph Agent Lightning Optimization
 
+[![Built by Soba Labs](https://img.shields.io/badge/built%20by-Soba%20Labs-14273e?style=flat)](https://sobalabs.ai/open-source/?utm_source=github&utm_medium=referral&utm_campaign=langgraph-agent-lightning-optimization&utm_content=readme-badge)
+
 This project demonstrates prompt optimization for LLM agents using the [Agent Lightning](https://github.com/microsoft/agent-lightning) framework with APO (Automatic Prompt Optimization).
 
 ## Overview
@@ -156,3 +158,7 @@ Dataset contains 57 test cases with varying complexity.
 ## Acknowledgments
 
 Examples adapted from [Microsoft Agent Lightning](https://github.com/microsoft/agent-lightning/tree/main/examples/apo).
+
+## Built by Soba Labs
+
+This project is free and open source under the MIT license, built and maintained by [Soba Labs](https://sobalabs.ai/?utm_source=github&utm_medium=referral&utm_campaign=langgraph-agent-lightning-optimization&utm_content=readme-footer), an AI-native software development agency that builds and operates production agentic systems. If you need help optimizing or running LangGraph agents in production, write to [contact@sobalabs.ai](mailto:contact@sobalabs.ai).
