@@ -1,6 +1,10 @@
+<p align="center">
+  <a href="https://sobalabs.ai/?utm_source=github&utm_medium=referral&utm_campaign=langgraph-agent-lightning-optimization&utm_content=readme-banner"><img src=".github/soba-labs-banner.svg" alt="Soba Labs" width="100%"></a>
+</p>
+
 # LangGraph Agent Lightning Optimization
 
-[![Built by Soba Labs](https://img.shields.io/badge/built%20by-Soba%20Labs-14273e?style=flat)](https://sobalabs.ai/open-source/?utm_source=github&utm_medium=referral&utm_campaign=langgraph-agent-lightning-optimization&utm_content=readme-badge)
+[![License: MIT](https://img.shields.io/badge/license-MIT-ba9768?style=flat)](https://github.com/soba-labs/langgraph-agent-lightning-optimization/blob/main/LICENSE) [![Sponsored by Soba Labs](https://img.shields.io/badge/sponsored%20by-Soba%20Labs-132a3c?style=flat)](https://sobalabs.ai/?utm_source=github&utm_medium=referral&utm_campaign=langgraph-agent-lightning-optimization&utm_content=readme-badge)
 
 This project demonstrates prompt optimization for LLM agents using the [Agent Lightning](https://github.com/microsoft/agent-lightning) framework with APO (Automatic Prompt Optimization).
 
@@ -158,6 +162,10 @@ Dataset contains 57 test cases with varying complexity.
 ## Acknowledgments
 
 Examples adapted from [Microsoft Agent Lightning](https://github.com/microsoft/agent-lightning/tree/main/examples/apo).
+
+## Read more
+
+- [Agent Lightning 1.0 has no APO: what we kept](https://sobalabs.ai/blog/agent-lightning-langgraph-optimization/?utm_source=github&utm_medium=referral&utm_campaign=langgraph-agent-lightning-optimization&utm_content=readme-read-more): what changed in Agent Lightning 1.0 and what this example still shows.
 
 ## Built by Soba Labs
 
