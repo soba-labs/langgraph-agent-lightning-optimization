@@ -17,6 +17,8 @@ Agent Lightning is a framework for optimizing LLM agent prompts through iterativ
 - Evaluate agent performance with LLM-based judges
 - Work with both OpenAI and LangGraph implementations
 
+Optimizing LangGraph agents for production? [Talk to Soba Labs](https://sobalabs.ai/contact/?utm_source=github&utm_medium=referral&utm_campaign=langgraph-agent-lightning-optimization&utm_content=readme-inline).
+
 ## Project Structure
 
 ```
@@ -169,4 +171,4 @@ Examples adapted from [Microsoft Agent Lightning](https://github.com/microsoft/a
 
 ## Built by Soba Labs
 
-This project is free and open source under the MIT license, built and maintained by [Soba Labs](https://sobalabs.ai/?utm_source=github&utm_medium=referral&utm_campaign=langgraph-agent-lightning-optimization&utm_content=readme-footer), an AI-native software development agency that builds and operates production agentic systems. If you need help optimizing or running LangGraph agents in production, write to [contact@sobalabs.ai](mailto:contact@sobalabs.ai).
+This project is free and open source under the MIT license, built and maintained by [Soba Labs](https://sobalabs.ai/?utm_source=github&utm_medium=referral&utm_campaign=langgraph-agent-lightning-optimization&utm_content=readme-footer), an AI-native software development agency that builds and operates production agentic systems. If you need help optimizing or running LangGraph agents in production, [talk to Soba Labs](https://sobalabs.ai/contact/?utm_source=github&utm_medium=referral&utm_campaign=langgraph-agent-lightning-optimization&utm_content=readme-footer) or write to [contact@sobalabs.ai](mailto:contact@sobalabs.ai).
